@@ -102,8 +102,19 @@ test/e2e: export AWS_SECRET_ACCESS_KEY := 1234
 test/e2e: export AWS_BUCKET := dummy
 test/e2e: export GH_CLIENT_ID := 1234
 test/e2e: export GH_CLIENT_SECRET := 1234
-test/e2e: cluster/cleanup cluster/prepare
-	INTEGREATLY_OPERATOR_DISABLE_ELECTION=true operator-sdk --verbose test local ./test/e2e --namespace $(NAMESPACE) --up-local --go-test-flags "-timeout=60m" --debug
+test/e2e: cluster/cleanup cluster/prepare/project cluster/prepare/e2e cluster/prepare/secrets cluster/prepare/osrc
+	INTEGREATLY_OPERATOR_DISABLE_ELECTION=true operator-sdk --verbose test local ./test/e2e --namespace $(NAMESPACE) --go-test-flags "-timeout=60m" --debug --no-setup
+
+.PHONY: cluster/prepare/e2e
+cluster/prepare/e2e:
+	@oc create -f deploy/crds/*.crd.yaml
+	@oc create -f deploy/service_account.yaml
+	@oc create -f deploy/role.yaml
+	@oc create -f deploy/role_binding.yaml
+	@oc create -f deploy/clusterrole.yaml
+	@oc create -f deploy/cluster_role_binding.yaml
+	@oc create -f deploy/operator.yaml
+
 
 .PHONY: test/e2e/olm
 test/e2e/olm: export AWS_ACCESS_KEY_ID := 1234
