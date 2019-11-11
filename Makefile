@@ -1,4 +1,4 @@
-ORG=integreatly
+ORG=ppaszki
 NAMESPACE=integreatly
 PROJECT=integreatly-operator
 REG=quay.io
