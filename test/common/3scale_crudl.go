@@ -36,6 +36,7 @@ func Test3ScaleCrudlPermissions(t *testing.T, ctx *TestingContext) {
 	// Login to 3Scale
 	err = loginToThreeScale(t, host, threescaleLoginUser, DefaultPassword, "testing-idp", ctx.HttpClient)
 	if err != nil {
+		dumpAuthResources(ctx.Client)
 		t.Skip("Skipping due to known flaky behavior, to be fixed ASAP.\nJIRA: https://issues.redhat.com/browse/INTLY-8433")
 		// t.Fatal(err)
 	}

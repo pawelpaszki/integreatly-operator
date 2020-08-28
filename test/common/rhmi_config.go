@@ -248,6 +248,7 @@ func verifyRHMIConfigMutatingWebhook(ctx *TestingContext, t *testing.T) {
 
 	// Get customer admin tokens
 	if err := resources.DoAuthOpenshiftUser(fmt.Sprintf("%s/auth/login", masterURL), "customer-admin-1", DefaultPassword, ctx.HttpClient, TestingIDPRealm, t); err != nil {
+		dumpAuthResources(ctx.Client)
 		t.Errorf("error occured trying to get token : %v", err)
 		return
 	}

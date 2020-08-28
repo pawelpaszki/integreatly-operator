@@ -2,9 +2,10 @@ package common
 
 import (
 	"fmt"
-	"k8s.io/client-go/rest"
 	"testing"
 	"time"
+
+	"k8s.io/client-go/rest"
 
 	"github.com/integr8ly/integreatly-operator/test/resources"
 	"github.com/keycloak/keycloak-operator/pkg/apis/keycloak/v1alpha1"

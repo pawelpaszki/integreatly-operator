@@ -10,6 +10,7 @@ import (
 	"strings"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/integr8ly/integreatly-operator/test/metadata"
 	"github.com/jstemmer/go-junit-report/formatter"
@@ -69,12 +70,36 @@ func teeOutput(f func()) string {
 				break
 			}
 
-			_, err = w.Write(buf[:l])
+			s := string(buf[:l])
+			lines := strings.Split(s, "\n")
+			out := ""
+			for _, l := range lines {
+
+				trimmed := strings.TrimSpace(l)
+				if strings.HasPrefix(trimmed, "--- PASS") ||
+					strings.HasPrefix(trimmed, "PASS") ||
+					strings.HasPrefix(trimmed, "--- FAIL") ||
+					strings.HasPrefix(trimmed, "--- SKIP") ||
+					strings.HasPrefix(trimmed, "=== CONT") ||
+					strings.HasPrefix(trimmed, "=== RUN") {
+					out += l + "\n"
+				} else if trimmed != "" {
+					t := time.Now().UTC()
+					formatted := fmt.Sprintf("%d-%02d-%02dT%02d:%02d:%02d",
+						t.Year(), t.Month(), t.Day(),
+						t.Hour(), t.Minute(), t.Second())
+					out += fmt.Sprintf("[%v] %v\n", formatted, l)
+				}
+
+			}
+			outBytes := []byte(out)
+
+			_, err = w.Write(outBytes)
 			if err != nil {
 				panic(err)
 			}
 
-			_, err = output.Write(buf[:l])
+			_, err = output.Write(outBytes)
 			if err != nil {
 				break
 			}
